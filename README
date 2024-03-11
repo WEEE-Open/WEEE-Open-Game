@@ -1,4 +1,5 @@
 WEEE Open Game - Developed by WEEE Open student team, 2024
+WARNING - WORK IN PROGRESS, DOCUMENTATION NOT FINISHED YET
 
 -- How does this works?
 The root of the project is the index.html file, which loads each js module.

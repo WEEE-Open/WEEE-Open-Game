@@ -134,7 +134,7 @@ class Player {
         // if(this.acc_y<0)
         //     renderRect(this.x,this.y+this.h,this.w,10,'yellow')
         const frame = Math.floor(game.ticks.frame/sprites[game.npc.type].slowness)
-        ctx.drawImage(sprites.character.img,
+        ctx.drawImage(sprites.player.img,
             GAME_CELL_SIZE*(frame%sprites[game.npc.type].frames),
             this.acc_y<0 ? GAME_CELL_SIZE : 0,
             GAME_CELL_SIZE,
@@ -279,39 +279,6 @@ function gameSceneLoop() {
                             soundPlay('screw')
                         }
                         if(game.npc.type=='amp')
-                            if(game.state=='running')
-                                gameChangeState('lose')
-                    }
-                }
-            }))
-        }
-        function renderNPCOdd() {
-            if(game.ticks.npc==0) {
-                game.npc_odd.type = ['screw','amp'][randomInt(2)]
-                game.npc_odd.pattern = structuredClone(game.patterns[game.npc_odd.type][randomInt(game.patterns[game.npc_odd.type].length)])
-                game.npc_odd.offset.x = randomInt(W/GAME_CELL_SIZE-game.npc_odd.pattern[0].length)
-                game.npc_odd.offset.y = randomInt(GAME_PADDING,H/GAME_CELL_SIZE-GAME_PADDING-game.npc_odd.pattern.length)
-            }
-            const frame = Math.floor(game.ticks.frame/sprites[game.npc_odd.type].slowness)
-            game.npc_odd.pattern.forEach((row,i) => row.forEach((cell,j) => {
-                if(cell) {
-                    let npc_x = W*2-game.ticks.npc*GAME_SPEED_H+(game.npc_odd.offset.x+j)*GAME_CELL_SIZE
-                    let npc_y = (game.npc_odd.offset.y+i)*GAME_CELL_SIZE
-                    ctx.drawImage(
-                        sprites[game.npc_odd.type].img,
-                        GAME_CELL_SIZE*(frame%sprites[game.npc_odd.type].frames),0,GAME_CELL_SIZE,GAME_CELL_SIZE,
-                        npc_x,npc_y,GAME_CELL_SIZE,GAME_CELL_SIZE
-                    )
-                    if(checkIntersection2D(
-                        player.x,player.y,player.w,player.h,
-                        npc_x,npc_y,GAME_CELL_SIZE,GAME_CELL_SIZE
-                    )) {
-                        if(game.npc_odd.type=='screw') {
-                            game.score++
-                            game.npc_odd.pattern[i][j] = 0
-                            soundPlay('screw')
-                        }
-                        if(game.npc_odd.type=='amp')
                             if(game.state=='running')
                                 gameChangeState('lose')
                     }

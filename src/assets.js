@@ -1,6 +1,7 @@
 /* Global variables and functions */
+const VERSION = '0.1.1'
+const MOBILE = navigator.userAgent.match(/mobile/i) ? true : false
 const [W,H] = [1024,576]//[960,540]
-const VERSION = 0.1
 const keys = {
     Enter:{pressed:false},
     ' ':{pressed:false},
@@ -37,7 +38,7 @@ const fonts = [
     new FontFace('Emulogic','url(res/emulogic.ttf)'),
 ]
 const sprites = {
-    character:{img:null,frames:4,slowness:8},
+    player:{img:null,frames:4,slowness:8},
     screw:{img:null,frames:4,slowness:8},
     amp:{img:null,frames:4,slowness:8},
     background:{img:null,dw:W*6,dh:H,sw:768,sh:72},

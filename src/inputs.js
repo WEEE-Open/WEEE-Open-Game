@@ -2,7 +2,8 @@
 loadResources()
 
 /* After page loaded */
-addEventListener('load',() => {
+if(MOBILE) alert('Game not available on mobile devices')
+else addEventListener('load',() => {
     mainInit()
     mainLoop()
     
