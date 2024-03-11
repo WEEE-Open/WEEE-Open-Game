@@ -1,0 +1,37 @@
+WEEE Open Game - Developed by WEEE Open student team, 2024
+
+-- How does this works?
+The root of the project is the index.html file, which loads each js module.
+The modules loaded are, in order:
+1. Utils (utils.js)
+2. Assets (assets.js)
+3. Scenes (scene_xxx.js)
+4. (transition.js)
+5. Main (main.js)
+6. Inputs (inputs.js)
+Let's see these modules more in details.
+
+-- 1. Utils
+Contains general global functions that can be useful while coding and that do not require any declared constant/variable.
+Usually Utils contains math functions and other frequent operations.
+
+-- 2. Assets
+-- 2.1. Global variables and functions
+-- 2.2. Resources
+-- 2.3. Rendering properties and functions
+
+-- 3. Scenes
+List of scenes in the format scene_xxx. Each scene must implement four methods:
+-- 3.1. xxxSceneInit(): 
+-- 3.2. xxxSceneKeyPress(key):
+-- 3.3. xxxSceneKeyRelease(key):
+-- 3.4. xxxSceneLoop():
+
+-- 4. Transition
+It's a "special scene" that overlaps others while changing a scene.
+It does not have methods about inputs (key press, key release)
+
+-- 5. Main
+It's the "global scene" that executes the code in each one of the four methods regardless of which scene is active
+
+-- 6. Inputs
