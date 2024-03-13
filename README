@@ -7,7 +7,7 @@ The modules loaded are, in order:
 1. Utils (utils.js)
 2. Assets (assets.js)
 3. Scenes (scene_xxx.js)
-4. (transition.js)
+4. Transition (transition.js)
 5. Main (main.js)
 6. Inputs (inputs.js)
 Let's see these modules more in details.

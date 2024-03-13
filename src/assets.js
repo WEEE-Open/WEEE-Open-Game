@@ -1,5 +1,5 @@
 /* Global variables and functions */
-const VERSION = '0.1.1'
+const VERSION = '0.1.2'
 const MOBILE = navigator.userAgent.match(/mobile/i) ? true : false
 const [W,H] = [1024,576]//[960,540]
 const keys = {

@@ -17,6 +17,7 @@ const GAME_LOSESCREEN_SIZE = 0.6
 const GAME_MAXTICK_FRAME = 1024
 const GAME_MAXTICK_BG = sprites.background.dw/GAME_SPEED_BG
 const GAME_MAXTICK_OBJ = W*2/GAME_SPEED_H
+const GAME_MAXTICK_SCREEN = W/GAME_SPEED_H
 
 const game = {
     state:'',
@@ -24,6 +25,7 @@ const game = {
         frame:0,
         bg:0,
         npc:0,
+        screen:0,
     },
     patterns:{
         screw:[
@@ -110,14 +112,6 @@ const game = {
             y:0,
         },
     },
-    npc_odd:{
-        type:'',
-        pattern:[],
-        offset:{
-            x:0,
-            y:0,
-        },
-    },
 }
 
 class Player {
@@ -130,12 +124,9 @@ class Player {
         this.acc_y = 0
     }
     render() {
-        // renderRect(this.x,this.y,this.w,this.h,'red')
-        // if(this.acc_y<0)
-        //     renderRect(this.x,this.y+this.h,this.w,10,'yellow')
-        const frame = Math.floor(game.ticks.frame/sprites[game.npc.type].slowness)
+        const frame = Math.floor(game.ticks.frame/sprites.player.slowness)
         ctx.drawImage(sprites.player.img,
-            GAME_CELL_SIZE*(frame%sprites[game.npc.type].frames),
+            GAME_CELL_SIZE*(frame%sprites.player.frames),
             this.acc_y<0 ? GAME_CELL_SIZE : 0,
             GAME_CELL_SIZE,
             GAME_CELL_SIZE,
@@ -172,6 +163,61 @@ class Player {
 }
 let player
 
+class NPC {
+    constructor() {
+        this.type = ['screw','amp'][randomInt(2)]
+        this.pattern = structuredClone(game.patterns[this.type][randomInt(game.patterns[this.type].length)])
+        this.x = W+randomInt(4)*GAME_CELL_SIZE//W+randomInt(W/GAME_CELL_SIZE-this.pattern[0].length)*GAME_CELL_SIZE
+        this.y = randomInt(GAME_PADDING,H/GAME_CELL_SIZE-GAME_PADDING-this.pattern.length)
+        this.frame = 0
+    }
+    render() {
+        // if(this.type=='screw') this.pattern.forEach((row,i) => {
+        //     row.forEach((cell,j) => {
+        //         if(cell) renderRect(this.x+j*GAME_CELL_SIZE,(this.y+i)*GAME_CELL_SIZE,GAME_CELL_SIZE,GAME_CELL_SIZE,'grey')
+        //     })
+        // })
+        // if(this.type=='amp') this.pattern.forEach((row,i) => {
+        //     row.forEach((cell,j) => {
+        //         if(cell) renderCircle(this.x+j*GAME_CELL_SIZE,(this.y+i)*GAME_CELL_SIZE+GAME_CELL_SIZE/2,GAME_CELL_SIZE/2,'red')
+        //     })
+        // })
+        this.pattern.forEach((row,i) => {
+            row.forEach((cell,j) => {
+                if(cell)
+                    ctx.drawImage(
+                        sprites[this.type].img,
+                        GAME_CELL_SIZE*(this.frame%sprites[this.type].frames),0,GAME_CELL_SIZE,GAME_CELL_SIZE,
+                        this.x+j*GAME_CELL_SIZE,(this.y+i)*GAME_CELL_SIZE,GAME_CELL_SIZE,GAME_CELL_SIZE
+                    )
+            })
+        })
+    }
+    update() {
+        this.x -= GAME_SPEED_H
+        this.frame = Math.floor(game.ticks.frame/sprites[this.type].slowness)
+        this.pattern.forEach((row,i) => {
+            row.forEach((cell,j) => {
+                if(cell)
+                    if(checkIntersection2D(
+                        player.x,player.y,player.w,player.h,
+                        this.x+j*GAME_CELL_SIZE,(this.y+i)*GAME_CELL_SIZE,GAME_CELL_SIZE,GAME_CELL_SIZE
+                    )) {
+                        if(this.type=='screw') {
+                            game.score++
+                            this.pattern[i][j] = 0
+                            soundPlay('screw')
+                        }
+                        if(this.type=='amp')
+                            if(game.state=='running')
+                                gameChangeState('lose')
+                    }
+            })
+        })
+    }
+}
+let npc
+
 function gameChangeState(state) {
     game.state = state
     if(state=='lose') {
@@ -187,6 +233,7 @@ function gameSceneInit() {
     musicStop()
     musicPlay()
     player = new Player(GAME_CELL_SIZE*2,GAME_FLOOR-GAME_PLAYER_H)
+    npc = []
 }
 
 function gameSceneKeyPress(key) {
@@ -244,7 +291,7 @@ function gameSceneLoop() {
             renderRect(0,GAME_FLOOR,W,H-GAME_FLOOR,GAME_COLOR_FLOOR)
             renderText('v '+VERSION,10,H-10,'green',{font:'Emulogic',size:0.4})
         }
-        function renderNPC() {
+        function renderNPClegacy() {
             if(game.ticks.npc==0) {
                 game.npc.type = ['screw','amp'][randomInt(2)]
                 game.npc.pattern = structuredClone(game.patterns[game.npc.type][randomInt(game.patterns[game.npc.type].length)])
@@ -295,15 +342,14 @@ function gameSceneLoop() {
             )
             renderText('GAME OVER',W/2,H*2/5,'white',{centered:true,font:'emulogic'})
             renderText('Your score is '+game.score,W/2,H*3/5,'white',{centered:true,font:'emulogic',size:0.6})
-            renderText('Press <R> to retry',W/2,H*2/3,'white',{centered:true,font:'emulogic',size:0.5})
+            renderText('Press <R> to retry',W/2,H*2/3,'yellow',{centered:true,font:'emulogic',size:0.5})
         }
         function renderScore() {
             renderText('Score: '+game.score,16,GAME_CEILING*3/4,'green',{font:'emulogic'})
         }
         /* Render pipeline */
         /* 0 */ renderBG()
-        /* 1 */ renderNPC()
-        // renderNPCOdd()
+        /* 1 */ npc.forEach(e => e.render())//renderNPClegacy()
         /* 2 */ player.render()
         /* 3 */ if(game.state=='lose') renderLoseScreen()
         /* 4 */ if(game.state=='running') renderScore()
@@ -311,12 +357,19 @@ function gameSceneLoop() {
     function update() {
         if(game.state=='running') {
             player.update()
+            npc.forEach(e => e.update())
+            if(game.ticks.screen==0) {
+                npc.push(new NPC())
+                if(npc.length>2) npc.shift()
+            }
             game.ticks.frame++
             game.ticks.frame %= GAME_MAXTICK_FRAME
             game.ticks.bg++
             game.ticks.bg %= GAME_MAXTICK_BG
             game.ticks.npc++
             game.ticks.npc %= GAME_MAXTICK_OBJ
+            game.ticks.screen++
+            game.ticks.screen %= GAME_MAXTICK_SCREEN
         }
     }
     render()
