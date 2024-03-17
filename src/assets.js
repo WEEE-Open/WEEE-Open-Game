@@ -1,5 +1,5 @@
 /* Global variables and functions */
-const VERSION = '0.1.2'
+const VERSION = '0.1.3'
 const MOBILE = navigator.userAgent.match(/mobile/i) ? true : false
 const [W,H] = [1024,576]//[960,540]
 const keys = {
@@ -35,7 +35,7 @@ function sceneChange(scene_new,{type='fade',sleep=1000}={}) {
 
 /* Resources */
 const fonts = [
-    new FontFace('Emulogic','url(res/emulogic.ttf)'),
+    new FontFace('Emulogic','url(res/fonts/emulogic.ttf)'),
 ]
 const sprites = {
     player:{img:null,frames:4,slowness:8},
@@ -45,22 +45,22 @@ const sprites = {
     clouds:{img:null,dw:W,dh:H,sw:64,sh:36},
 }
 const music = {
-    theme1:{audio:new Audio('res/comic_bakery_noise_maker.mp3'),volume:0.5},
-    theme2:{audio:new Audio('res/world_of_vikings_maniac.mp3'),volume:0.4,verse:14.5},
-    theme3:{audio:new Audio('res/unreal_super_hero_3.mp3'),volume:0.8,verse:14.2},
-    theme4:{audio:new Audio('res/time_machine_waterflame.mp3'),volume:0.5},
-    theme5:{audio:new Audio('res/sound_of_infinity_f777.mp3'),volume:0.4},
+    theme1:{audio:new Audio('res/music/comic_bakery_noise_maker.mp3'),volume:0.5},
+    theme2:{audio:new Audio('res/music/world_of_vikings_maniac.mp3'),volume:0.4,verse:14.5},
+    theme3:{audio:new Audio('res/music/unreal_super_hero_3.mp3'),volume:0.8,verse:14.2},
+    theme4:{audio:new Audio('res/music/time_machine_waterflame.mp3'),volume:0.5,verse:68},
+    theme5:{audio:new Audio('res/music/sound_of_infinity_f777.mp3'),volume:0.4},
 }
 const sounds = {
-    screw:{audio:new Audio('res/coin.wav'),volume:0.8},
-    death:{audio:new Audio('res/death.wav'),volume:0.6},
-    jetpack:{audio:new Audio('res/jetpack.wav'),loop:true,volume:0.4}
+    screw:{audio:new Audio('res/sounds/coin.wav'),volume:0.8},
+    death:{audio:new Audio('res/sounds/death.wav'),volume:0.6},
+    jetpack:{audio:new Audio('res/sounds/jetpack.wav'),loop:true,volume:0.4}
 }
 function loadResources() {
     fonts.forEach(f => document.fonts.add(f))
     Object.keys(sprites).forEach(s => {
         sprites[s].img = new Image()
-        sprites[s].img.src = 'res/'+s+'.png'
+        sprites[s].img.src = 'res/graphics/'+s+'.png'
     })
     Object.keys(music).forEach(m => {
         music[m].audio.loop = true

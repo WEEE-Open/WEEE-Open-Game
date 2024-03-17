@@ -29,7 +29,7 @@ function menuSceneLoop() {
         ctx.translate(-100,40)
         ctx.scale(1.1,1.1)
         for(i=0;i<W/MENU_SQUARE_SIZE;i++)
-            renderRect(MENU_SQUARE_SIZE*i,84+16*Math.sin(i+menu.ticks.squares/8),MENU_SQUARE_SIZE,MENU_SQUARE_SIZE*2,MENU_COLOR_SUBTITLE)
+            renderRect(MENU_SQUARE_SIZE*i,84+16*Math.sin(i+menu.ticks.squares/8),MENU_SQUARE_SIZE+1,MENU_SQUARE_SIZE*2,MENU_COLOR_SUBTITLE)
         ctx.resetTransform()
         renderText('WEEE OPEN GAME',W/2,H*5/12,MENU_COLOR_TITLE,{centered:true,font:'Emulogic',size:1.8})
         renderText('Use WASD to move',W/2,H*6/8,MENU_COLOR_SUBTITLE,{centered:true,font:'Emulogic',size:0.8})

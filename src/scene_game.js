@@ -15,103 +15,85 @@ const GAME_PLAYER_SPEED_V = 0.5
 const GAME_PLAYER_SPEED_H = 6
 const GAME_LOSESCREEN_SIZE = 0.6
 const GAME_MAXTICK_FRAME = 1024
-const GAME_MAXTICK_BG = sprites.background.dw/GAME_SPEED_BG
-const GAME_MAXTICK_OBJ = W*2/GAME_SPEED_H
+// const GAME_MAXTICK_BG = sprites.background.dw/GAME_SPEED_BG
 const GAME_MAXTICK_SCREEN = W/GAME_SPEED_H
+const GAME_BG_PARALLAX = 3/4
 
-const game = {
-    state:'',
-    ticks:{
-        frame:0,
-        bg:0,
-        npc:0,
-        screen:0,
-    },
-    patterns:{
-        screw:[
-            [
-                [0,0,1,1,1,1,1,1,0,0],
-                [0,1,1,1,1,1,1,1,1,0],
-                [1,1,1,1,1,1,1,1,1,1],
-                [0,1,1,1,1,1,1,1,1,0],
-                [0,0,1,1,1,1,1,1,0,0],
-            ],
-            [
-                [0,0,1,1,1,1,1,1,0,0],
-                [0,1,1,1,1,1,1,1,1,0],
-                [1,1,1,1,1,1,1,1,1,1],
-                [1,1,0,0,0,0,0,0,1,1],
-                [1,0,0,0,0,0,0,0,0,1],
-            ],
-            [
-                [1,0,0,0,0,0,0,0,0,1],
-                [1,1,0,0,0,0,0,0,1,1],
-                [1,1,1,1,1,1,1,1,1,1],
-                [0,1,1,1,1,1,1,1,1,0],
-                [0,0,1,1,1,1,1,1,0,0],
-            ],
-            [
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            ],
-            [
-                [1,0,1,0,1,0,1,0,1,0,1],
-                [0,1,0,1,0,1,0,1,0,1,0],
-                [1,0,1,0,1,0,1,0,1,0,1],
-                [0,1,0,1,0,1,0,1,0,1,0],
-                [1,0,1,0,1,0,1,0,1,0,1],
-            ],
+const patterns = {
+    screw:[
+        [
+            [0,0,1,1,1,1,1,1,0,0],
+            [0,1,1,1,1,1,1,1,1,0],
+            [1,1,1,1,1,1,1,1,1,1],
+            [0,1,1,1,1,1,1,1,1,0],
+            [0,0,1,1,1,1,1,1,0,0],
         ],
-        amp:[
-            [
-                [1],
-                [1],
-                [1],
-                [1],
-                [1],
-                [1],
-                [1],
-            ],
-            [
-                [1,1,1,1,1,1,1,1,1,1,1,1],
-            ],
-            [
-                [1,0,1,0,1,0,1,0,1],
-                [0,0,0,0,0,0,0,0,0],
-                [1,0,1,0,1,0,1,0,1],
-                [0,0,0,0,0,0,0,0,0],
-                [1,0,1,0,1,0,1,0,1],
-            ],
-            [
-                [1,0,0,0,0,0,0],
-                [0,1,0,0,0,0,0],
-                [0,0,1,0,0,0,0],
-                [0,0,0,1,0,0,0],
-                [0,0,0,0,1,0,0],
-                [0,0,0,0,0,1,0],
-                [0,0,0,0,0,0,1],
-            ],
-            [
-                [0,0,0,0,0,0,1],
-                [0,0,0,0,0,1,0],
-                [0,0,0,0,1,0,0],
-                [0,0,0,1,0,0,0],
-                [0,0,1,0,0,0,0],
-                [0,1,0,0,0,0,0],
-                [1,0,0,0,0,0,0],
-            ],
+        [
+            [0,0,1,1,1,1,1,1,0,0],
+            [0,1,1,1,1,1,1,1,1,0],
+            [1,1,1,1,1,1,1,1,1,1],
+            [1,1,0,0,0,0,0,0,1,1],
+            [1,0,0,0,0,0,0,0,0,1],
         ],
-    },
-    score:0,
-    npc:{
-        type:'',
-        pattern:[],
-        offset:{
-            x:0,
-            y:0,
-        },
-    },
+        [
+            [1,0,0,0,0,0,0,0,0,1],
+            [1,1,0,0,0,0,0,0,1,1],
+            [1,1,1,1,1,1,1,1,1,1],
+            [0,1,1,1,1,1,1,1,1,0],
+            [0,0,1,1,1,1,1,1,0,0],
+        ],
+        [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        ],
+        [
+            [1,0,1,0,1,0,1,0,1,0,1],
+            [0,1,0,1,0,1,0,1,0,1,0],
+            [1,0,1,0,1,0,1,0,1,0,1],
+            [0,1,0,1,0,1,0,1,0,1,0],
+            [1,0,1,0,1,0,1,0,1,0,1],
+        ],
+    ],
+    amp:[
+        [
+            [1],
+            [1],
+            [1],
+            [1],
+            [1],
+            [1],
+            [1],
+        ],
+        [
+            [1,1,1,1,1,1,1,1,1,1,1,1],
+        ],
+        [
+            [1,0,1,0,1,0,1,0,1],
+            [0,0,0,0,0,0,0,0,0],
+            [1,0,1,0,1,0,1,0,1],
+            [0,0,0,0,0,0,0,0,0],
+            [1,0,1,0,1,0,1,0,1],
+        ],
+        [
+            [1,0,0,0,0,0,0],
+            [0,1,0,0,0,0,0],
+            [0,0,1,0,0,0,0],
+            [0,0,0,1,0,0,0],
+            [0,0,0,0,1,0,0],
+            [0,0,0,0,0,1,0],
+            [0,0,0,0,0,0,1],
+        ],
+        [
+            [0,0,0,0,0,0,1],
+            [0,0,0,0,0,1,0],
+            [0,0,0,0,1,0,0],
+            [0,0,0,1,0,0,0],
+            [0,0,1,0,0,0,0],
+            [0,1,0,0,0,0,0],
+            [1,0,0,0,0,0,0],
+        ],
+    ],
 }
 
 class Player {
@@ -161,27 +143,16 @@ class Player {
         this.vel_y = 0
     }
 }
-let player
 
-class NPC {
+class Entity {
     constructor() {
         this.type = ['screw','amp'][randomInt(2)]
-        this.pattern = structuredClone(game.patterns[this.type][randomInt(game.patterns[this.type].length)])
-        this.x = W+randomInt(4)*GAME_CELL_SIZE//W+randomInt(W/GAME_CELL_SIZE-this.pattern[0].length)*GAME_CELL_SIZE
+        this.pattern = structuredClone(patterns[this.type][randomInt(patterns[this.type].length)])
+        this.x = W//W+randomInt(4)*GAME_CELL_SIZE//W+randomInt(W/GAME_CELL_SIZE-this.pattern[0].length)*GAME_CELL_SIZE
         this.y = randomInt(GAME_PADDING,H/GAME_CELL_SIZE-GAME_PADDING-this.pattern.length)
         this.frame = 0
     }
     render() {
-        // if(this.type=='screw') this.pattern.forEach((row,i) => {
-        //     row.forEach((cell,j) => {
-        //         if(cell) renderRect(this.x+j*GAME_CELL_SIZE,(this.y+i)*GAME_CELL_SIZE,GAME_CELL_SIZE,GAME_CELL_SIZE,'grey')
-        //     })
-        // })
-        // if(this.type=='amp') this.pattern.forEach((row,i) => {
-        //     row.forEach((cell,j) => {
-        //         if(cell) renderCircle(this.x+j*GAME_CELL_SIZE,(this.y+i)*GAME_CELL_SIZE+GAME_CELL_SIZE/2,GAME_CELL_SIZE/2,'red')
-        //     })
-        // })
         this.pattern.forEach((row,i) => {
             row.forEach((cell,j) => {
                 if(cell)
@@ -194,13 +165,13 @@ class NPC {
         })
     }
     update() {
-        this.x -= GAME_SPEED_H
+        this.x -= game.speed_h
         this.frame = Math.floor(game.ticks.frame/sprites[this.type].slowness)
         this.pattern.forEach((row,i) => {
             row.forEach((cell,j) => {
                 if(cell)
                     if(checkIntersection2D(
-                        player.x,player.y,player.w,player.h,
+                        game.player.x,game.player.y,game.player.w,game.player.h,
                         this.x+j*GAME_CELL_SIZE,(this.y+i)*GAME_CELL_SIZE,GAME_CELL_SIZE,GAME_CELL_SIZE
                     )) {
                         if(this.type=='screw') {
@@ -216,7 +187,36 @@ class NPC {
         })
     }
 }
-let npc
+
+const game = {
+    state:'',
+    ticks:{
+        frame:0,
+        // bg:0,
+        screen:0,
+    },
+    score:0,
+    player:null,
+    entities:[],
+    speed_h:0,//8,
+    pos_bg:0,
+    // speed_bg:0,//game.speed_h*6/8,
+    // maxtick_bg:0,//sprites.background.dw/game.speed_bg,
+    // maxtick_screen:0,//W/game.speed_h,
+}
+
+function gameSceneInit() {
+    game.state = 'running'
+    game.score = 0
+    Object.keys(game.ticks).forEach(t => game.ticks[t] = 0)
+    musicStop()
+    musicPlay()
+    game.player = new Player(GAME_CELL_SIZE*2,GAME_FLOOR-GAME_PLAYER_H)
+    game.entities = []
+    game.speed_h = GAME_SPEED_H
+    game.speed_bg = GAME_SPEED_BG
+    game.pos_bg = 0
+}
 
 function gameChangeState(state) {
     game.state = state
@@ -226,16 +226,6 @@ function gameChangeState(state) {
     }
 }
 
-function gameSceneInit() {
-    game.state = 'running'
-    game.score = 0
-    Object.keys(game.ticks).forEach(t => game.ticks[t] = 0)
-    musicStop()
-    musicPlay()
-    player = new Player(GAME_CELL_SIZE*2,GAME_FLOOR-GAME_PLAYER_H)
-    npc = []
-}
-
 function gameSceneKeyPress(key) {
     if(game.state=='running') {
         if(key=='l') gameChangeState('lose')
@@ -243,7 +233,7 @@ function gameSceneKeyPress(key) {
         if(key=='ArrowUp' || key=='w' || key==' ') soundPlay('jetpack')
     }
     if(game.state=='lose') {
-        if(key=='r') sceneChange('game',{type:'bars',sleep:500})
+        if(key==' ') sceneChange('game',{type:'bars',sleep:500})
         if(key=='m') sceneChange('menu',{type:'circle',sleep:500})
     }
 }
@@ -260,28 +250,28 @@ function gameSceneLoop() {
             renderRect(0,0,W,H,GAME_COLOR_BG)
             ctx.drawImage(
                 sprites.clouds.img,
-                W/2-game.ticks.bg%(GAME_MAXTICK_BG/3)*GAME_SPEED_BG/2,
+                W/2-(game.pos_bg%(W*2))/2,
                 0,
                 sprites.clouds.dw,
                 sprites.clouds.dh
             )
             ctx.drawImage(
                 sprites.clouds.img,
-                W/2+sprites.clouds.dw-game.ticks.bg%(GAME_MAXTICK_BG/3)*GAME_SPEED_BG/2,
+                W*3/2-(game.pos_bg%(W*2))/2,
                 0,
                 sprites.clouds.dw,
                 sprites.clouds.dh
             )
             ctx.drawImage(
                 sprites.background.img,
-                0-game.ticks.bg*GAME_SPEED_BG,
+                0-game.pos_bg,//0-game.ticks.bg*game.speed_bg,
                 0,
                 sprites.background.dw,
                 sprites.background.dh
             )
             ctx.drawImage(
                 sprites.background.img,
-                sprites.background.dw-game.ticks.bg*GAME_SPEED_BG,
+                sprites.background.dw-game.pos_bg,//sprites.background.dw-game.ticks.bg*game.speed_bg,
                 0,
                 sprites.background.dw,
                 sprites.background.dh
@@ -290,47 +280,6 @@ function gameSceneLoop() {
             renderRect(0,0,W,GAME_CEILING,GAME_COLOR_CEILING)
             renderRect(0,GAME_FLOOR,W,H-GAME_FLOOR,GAME_COLOR_FLOOR)
             renderText('v '+VERSION,10,H-10,'green',{font:'Emulogic',size:0.4})
-        }
-        function renderNPClegacy() {
-            if(game.ticks.npc==0) {
-                game.npc.type = ['screw','amp'][randomInt(2)]
-                game.npc.pattern = structuredClone(game.patterns[game.npc.type][randomInt(game.patterns[game.npc.type].length)])
-                game.npc.offset.x = randomInt(W/GAME_CELL_SIZE-game.npc.pattern[0].length)
-                game.npc.offset.y = randomInt(GAME_PADDING,H/GAME_CELL_SIZE-GAME_PADDING-game.npc.pattern.length)
-            }
-            const frame = Math.floor(game.ticks.frame/sprites[game.npc.type].slowness)
-            game.npc.pattern.forEach((row,i) => row.forEach((cell,j) => {
-                if(cell) {
-                    let npc_x = W-game.ticks.npc*GAME_SPEED_H+(game.npc.offset.x+j)*GAME_CELL_SIZE
-                    let npc_y = (game.npc.offset.y+i)*GAME_CELL_SIZE
-                    if(game.npc.type=='amp') {
-                        ctx.drawImage(
-                            sprites.amp.img,
-                            GAME_CELL_SIZE*((frame)%sprites.amp.frames),0,GAME_CELL_SIZE,GAME_CELL_SIZE,
-                            npc_x,npc_y,GAME_CELL_SIZE,GAME_CELL_SIZE
-                        )
-                    } else {
-                        ctx.drawImage(
-                            sprites[game.npc.type].img,
-                            GAME_CELL_SIZE*(frame%sprites[game.npc.type].frames),0,GAME_CELL_SIZE,GAME_CELL_SIZE,
-                            npc_x,npc_y,GAME_CELL_SIZE,GAME_CELL_SIZE
-                        )
-                    }
-                    if(checkIntersection2D(
-                        player.x,player.y,player.w,player.h,
-                        npc_x,npc_y,GAME_CELL_SIZE,GAME_CELL_SIZE
-                    )) {
-                        if(game.npc.type=='screw') {
-                            game.score++
-                            game.npc.pattern[i][j] = 0
-                            soundPlay('screw')
-                        }
-                        if(game.npc.type=='amp')
-                            if(game.state=='running')
-                                gameChangeState('lose')
-                    }
-                }
-            }))
         }
         function renderLoseScreen() {
             renderRect(
@@ -342,32 +291,38 @@ function gameSceneLoop() {
             )
             renderText('GAME OVER',W/2,H*2/5,'white',{centered:true,font:'emulogic'})
             renderText('Your score is '+game.score,W/2,H*3/5,'white',{centered:true,font:'emulogic',size:0.6})
-            renderText('Press <R> to retry',W/2,H*2/3,'yellow',{centered:true,font:'emulogic',size:0.5})
+            renderText('Press space to retry',W/2,H*2/3,'yellow',{centered:true,font:'emulogic',size:0.5})
         }
         function renderScore() {
             renderText('Score: '+game.score,16,GAME_CEILING*3/4,'green',{font:'emulogic'})
         }
         /* Render pipeline */
         /* 0 */ renderBG()
-        /* 1 */ npc.forEach(e => e.render())//renderNPClegacy()
-        /* 2 */ player.render()
+        /* 1 */ game.entities.forEach(e => e.render())
+        /* 2 */ game.player.render()
         /* 3 */ if(game.state=='lose') renderLoseScreen()
         /* 4 */ if(game.state=='running') renderScore()
     }
     function update() {
         if(game.state=='running') {
-            player.update()
-            npc.forEach(e => e.update())
+            game.player.update()
+            game.entities.forEach(e => e.update())
             if(game.ticks.screen==0) {
-                npc.push(new NPC())
-                if(npc.length>2) npc.shift()
+                game.entities.push(new Entity())
+                if(game.entities.length>2) game.entities.shift()
             }
+            if(game.ticks.screen==0) {
+                game.speed_h += 0.5
+                // game.speed_bg = game.speed_h*6/8
+                // game.ticks.maxtick_screen = W/game.speed_h
+                console.log(game.speed_h)
+            }
+            game.pos_bg += game.speed_h*GAME_BG_PARALLAX
+            game.pos_bg %= sprites.background.dw
             game.ticks.frame++
             game.ticks.frame %= GAME_MAXTICK_FRAME
-            game.ticks.bg++
-            game.ticks.bg %= GAME_MAXTICK_BG
-            game.ticks.npc++
-            game.ticks.npc %= GAME_MAXTICK_OBJ
+            // game.ticks.bg++
+            // game.ticks.bg %= GAME_MAXTICK_BG
             game.ticks.screen++
             game.ticks.screen %= GAME_MAXTICK_SCREEN
         }
