@@ -1,5 +1,5 @@
 /* Global variables and functions */
-const VERSION = '0.1.3'
+const VERSION = '0.1.4'
 const MOBILE = navigator.userAgent.match(/mobile/i) ? true : false
 const [W,H] = [1024,576]//[960,540]
 const keys = {
@@ -52,7 +52,7 @@ const music = {
     theme5:{audio:new Audio('res/music/sound_of_infinity_f777.mp3'),volume:0.4},
 }
 const sounds = {
-    screw:{audio:new Audio('res/sounds/coin.wav'),volume:0.8},
+    screw:{audio:new Audio('res/sounds/coin.wav'),volume:0.3},
     death:{audio:new Audio('res/sounds/death.wav'),volume:0.6},
     jetpack:{audio:new Audio('res/sounds/jetpack.wav'),loop:true,volume:0.4}
 }
@@ -95,6 +95,7 @@ function soundPlay(sound) {
         const clone = sounds[sound].audio.cloneNode()
         clone.volume = sounds[sound].audio.volume
         clone.play()
+        clone.remove()
     }
 }
 

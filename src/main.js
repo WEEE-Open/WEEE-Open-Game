@@ -1,6 +1,7 @@
 function mainInit() {
     display.scene = 'menu'
     display.transition = false
+    window[display.scene+'SceneInit']()
 }
 
 function mainKeyPress(key) {
